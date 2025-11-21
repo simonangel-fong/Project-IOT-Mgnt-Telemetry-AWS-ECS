@@ -1,1 +1,1 @@
-# Project-IOT-Mgnt-Telemetry
+# Project: IoT Management Telemetry
