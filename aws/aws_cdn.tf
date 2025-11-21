@@ -50,7 +50,7 @@ resource "aws_cloudfront_distribution" "ecs_cdn" {
   }
 
   enabled     = true
-  aliases     = ["${local.dns_name}"]
+  aliases     = [local.dns_name]
   price_class = "PriceClass_100"
 
   viewer_certificate {
