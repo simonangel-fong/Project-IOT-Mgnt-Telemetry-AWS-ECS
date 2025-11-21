@@ -61,10 +61,10 @@ aws ecr get-login-password --region ca-central-1 | docker login --username AWS -
 docker build -t pgdb ./app/pgdb
 
 # tag your image
-docker tag pgdb 099139718958.dkr.ecr.ca-central-1.amazonaws.com/iot-mgnt-telemetry-pgdb:latest
+docker tag pgdb 099139718958.dkr.ecr.ca-central-1.amazonaws.com/iot-mgnt-telemetry-pgdb:dev
 
 # push image to repository
-docker push 099139718958.dkr.ecr.ca-central-1.amazonaws.com/iot-mgnt-telemetry-pgdb:latest
+docker push 099139718958.dkr.ecr.ca-central-1.amazonaws.com/iot-mgnt-telemetry-pgdb:dev
 
 # confirm
 aws ecr describe-images --repository-name iot-mgnt-telemetry-pgdb

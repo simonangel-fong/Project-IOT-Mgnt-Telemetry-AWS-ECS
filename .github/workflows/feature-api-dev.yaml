@@ -6,7 +6,8 @@ on:
     branches:
       - "feature-api-dev"
     paths:
-      - "app/**"
+      - "app/fastapi/**"
+      - "app/pgdb/**"
       - ".github/workflows/feature-api-dev.yaml"
 
 permissions:
@@ -40,19 +41,6 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Extract Docker metadata
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPOSITORY }}
-          tags: |
-            type=raw,value=latest
-            type=sha,format=long # Tag using the commit SHA
-
-      - name: test
-        run: |
-          echo ${{env.ECR_REPOSITORY}}:${{vars.ENV}}
-
       - name: FastAPI - Extract metadata
         id: fastapi-meta
         uses: docker/metadata-action@v5
@@ -66,4 +54,45 @@ jobs:
           push: true
           context: ${{ env.DIR_DOCKFILE }}
           labels: ${{ steps.fastapi-meta.outputs.labels }}
+          tags: "${{ env.ECR_REPOSITORY }}:${{ vars.ENV }}"
+
+  ecr-push-pgdb:
+    runs-on: ubuntu-latest
+    environment: dev
+    env:
+      AWS_REGION: ${{ vars.AWS_REGION }}
+      AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+      DIR_DOCKFILE: app/pgdb
+      ECR_REPOSITORY: "${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com/${{ vars.PROJECT }}-${{vars.APP}}-pgdb"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Postgres - Extract metadata
+        id: postgres-meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.ECR_REPOSITORY }}
+
+      - name: Postgres - Build and push Docker image
+        id: postgres-push
+        uses: docker/build-push-action@v3
+        with:
+          push: true
+          context: ${{ env.DIR_DOCKFILE }}
+          labels: ${{ steps.postgres-meta.outputs.labels }}
           tags: "${{ env.ECR_REPOSITORY }}:${{ vars.ENV }}"
