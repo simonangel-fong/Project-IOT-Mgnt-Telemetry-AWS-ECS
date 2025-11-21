@@ -169,11 +169,11 @@ resource "aws_ecs_task_definition" "ecs_task_pgdb" {
   # method: template file
   container_definitions = templatefile("${path.module}/container/pgdb.json.tftpl", {
     image          = "${var.aws_ecr_pgdb}:${var.env}"
-    awslogs_group  = "${local.svc_pgdb_log_group_name}"
-    region         = "${var.aws_region}"
-    pgdb_init_user = "${var.app_pgdb_init_user}"
-    pgdb_init_db   = "${var.app_pgdb_init_db}"
-    pgdb_init_pwd  = "${var.app_pgdb_init_pwd}"
+    awslogs_group  = local.svc_pgdb_log_group_name
+    region         = var.aws_region
+    pgdb_init_user = var.app_pgdb_init_user
+    pgdb_init_db   = var.app_pgdb_init_db
+    pgdb_init_pwd  = var.app_pgdb_init_pwd
   })
 }
 

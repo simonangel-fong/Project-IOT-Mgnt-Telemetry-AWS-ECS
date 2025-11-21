@@ -92,16 +92,16 @@ resource "aws_ecs_task_definition" "ecs_task_fastapi" {
   # method: template file
   container_definitions = templatefile("${path.module}/container/fastapi.json.tftpl", {
     image         = "${var.aws_ecr_fastapi}:${var.env}"
-    awslogs_group = "${local.svc_fastapi_log_group_name}"
-    region        = "${var.aws_region}"
-    app_name      = "${var.project}"
-    env           = "${var.env}"
-    debug         = "${local.debug}"
-    pgdb_host     = "${var.app_pgdb_host}"
-    pgdb_db       = "${var.app_pgdb_db}"
-    pgdb_user     = "${var.app_pgdb_user}"
-    pgdb_pwd      = "${var.app_pgdb_pwd}"
-    redis_host    = "${var.app_redis_host}"
+    awslogs_group = local.svc_fastapi_log_group_name
+    region        = var.aws_region
+    app_name      = var.project
+    env           = var.env
+    debug         = local.debug
+    pgdb_host     = var.app_pgdb_host
+    pgdb_db       = var.app_pgdb_db
+    pgdb_user     = var.app_pgdb_user
+    pgdb_pwd      = var.app_pgdb_pwd
+    redis_host    = var.app_redis_host
   })
 
   tags = {
