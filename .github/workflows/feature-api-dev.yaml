@@ -59,11 +59,11 @@ jobs:
         with:
           images: ${{ env.ECR_REPOSITORY }}
 
-      # - name: FastAPI - Build and push Docker image
-      #   id: fastapi-push
-      #   uses: docker/build-push-action@v3
-      #   with:
-      #     push: true
-      #     context: ${{ env.DIR_FASTAPI }}
-      #     labels: ${{ steps.fastapi-meta.outputs.labels }}
-      #     tags: "${{ vars.FASTAPI_REPO }}:${{ vars.FASTAPI_VERSION }}-${{ vars.ENV }}"
+      - name: FastAPI - Build and push Docker image
+        id: fastapi-push
+        uses: docker/build-push-action@v3
+        with:
+          push: true
+          context: ${{ env.DIR_DOCKFILE }}
+          labels: ${{ steps.fastapi-meta.outputs.labels }}
+          tags: "${{ env.ECR_REPOSITORY }}:${{ vars.ENV }}"
