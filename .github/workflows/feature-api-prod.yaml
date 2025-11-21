@@ -20,7 +20,8 @@ jobs:
     env:
       AWS_REGION: ${{ vars.AWS_REGION }}
       AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
-      ECR_REPOSITORY: iot-mgnt-telemetry-fastapi # ECR repo
+      DIR_DOCKFILE: app/fastapi
+      ECR_REPOSITORY: "${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com/${{ vars.PROJECT }}-${{vars.APP}}-fastapi:${{ vars.ENV }}"
 
     steps:
       - name: Checkout repository
@@ -48,12 +49,19 @@ jobs:
             type=raw,value=latest
             type=sha,format=long # Tag using the commit SHA
 
-      # - name: Build and push Docker image
-      #   uses: docker/build-push-action@v5
+      - name: test
+        run: echo ${{env.ECR_REPOSITORY}}
+      # - name: FastAPI - Extract metadata
+      #   id: fastapi-meta
+      #   uses: docker/metadata-action@v5
       #   with:
-      #     context: .
+      #     images: ${{ vars.FASTAPI_REPO }}
+
+      # - name: FastAPI - Build and push Docker image
+      #   id: fastapi-push
+      #   uses: docker/build-push-action@v3
+      #   with:
       #     push: true
-      #     tags: ${{ steps.meta.outputs.tags }}
-      #     labels: ${{ steps.meta.outputs.labels }}
-      #     cache-from: type=gha
-      #     cache-to: type=gha,mode=max
+      #     context: ${{ env.DIR_FASTAPI }}
+      #     labels: ${{ steps.fastapi-meta.outputs.labels }}
+      #     tags: "${{ vars.FASTAPI_REPO }}:${{ vars.FASTAPI_VERSION }}-${{ vars.ENV }}"
