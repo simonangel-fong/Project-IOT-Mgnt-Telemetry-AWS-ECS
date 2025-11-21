@@ -7,3 +7,7 @@ Application:
 
 Testing
 - [K6](./doc/k6/k6.md)
+
+Deployment
+
+- [AWS ECS](./doc/aws/aws.md)

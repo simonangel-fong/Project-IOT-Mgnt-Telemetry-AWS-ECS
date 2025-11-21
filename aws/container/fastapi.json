@@ -1,0 +1,44 @@
+[
+  {
+    "name": "fastapi",
+    "image": "099139718958.dkr.ecr.ca-central-1.amazonaws.com/demo-ecs-multi-svc/api:latest",
+    "cpu": 1024,
+    "memory": 2048,
+    "essential": true,
+    "portMappings": [
+      {
+        "name": "api",
+        "containerPort": 8000,
+        "protocol": "tcp"
+      }
+    ],
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {
+        "awslogs-create-group": "true",
+        "awslogs-group": "/ecs/task/demo-ecs-mul-svc-api",
+        "awslogs-region": "ca-central-1",
+        "awslogs-stream-prefix": "ecs"
+      }
+    },
+    "environment": [
+      { "name": "ENV", "value": "prod" },
+      { "name": "DEBUG", "value": "false" },
+      { "name": "DATABASE__HOST", "value": "pgdb" },
+      { "name": "DATABASE__PORT", "value": "5432" },
+      { "name": "DATABASE__DB_NAME", "value": "app_db" },
+      { "name": "DATABASE__USER", "value": "app_user" },
+      { "name": "DATABASE__PASSWORD", "value": "postgres" }
+    ],
+    "healthCheck": {
+      "command": [
+        "CMD-SHELL",
+        "curl -f http://localhost:8000/health || exit 1"
+      ],
+      "interval": 30,
+      "timeout": 5,
+      "retries": 3,
+      "startPeriod": 15
+    }
+  }
+]
