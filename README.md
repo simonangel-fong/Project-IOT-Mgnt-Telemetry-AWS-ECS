@@ -1,13 +1,15 @@
 # Project: IoT Management Telemetry
 
+## Documentation
 
-Application:
-- [FastAPI](./doc/fastapi/fastapi.md)
-- [PostgreSQL](./doc/postgres/postgres.md)
+- Application:
 
-Testing
-- [K6](./doc/k6/k6.md)
+  - [FastAPI](./doc/fastapi/fastapi.md)
+  - [PostgreSQL](./doc/postgres/postgres.md)
 
-Deployment
+- Testing
 
-- [AWS ECS](./doc/aws/aws.md)
+  - [K6](./doc/k6/k6.md)
+
+- Deployment
+  - [AWS ECS](./doc/aws/aws.md)
