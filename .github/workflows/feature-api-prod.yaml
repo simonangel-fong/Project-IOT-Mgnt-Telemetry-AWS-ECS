@@ -4,18 +4,17 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - "prod"
+      - "feature-api-dev"
     paths:
       - "app/**"
-      - "aws/**"
-      - ".github/workflows/feature-api-prod.yaml"
+      - ".github/workflows/feature-api-dev.yaml"
     
 permissions:
   id-token: write
   contents: read
 
 jobs:
-  build-and-push-to-ecr:
+  ecr-push-fastapi:
     runs-on: ubuntu-latest
 
     env:
