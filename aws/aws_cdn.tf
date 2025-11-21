@@ -17,7 +17,7 @@
 # resource "aws_cloudfront_distribution" "ecs_cdn" {
 
 #   origin {
-#     origin_id   = "${var.project}-cdn-origin"
+#     origin_id   = "${var.project}-${var.env}-cdn-origin"
 #     domain_name = aws_alb.lb.dns_name
 
 #     custom_origin_config {
@@ -45,7 +45,7 @@
 #   }
 
 #   enabled     = true
-#   aliases     = ["${var.project}.${var.dns_domain}"]
+#   aliases     = ["${local.dns_name}"]
 #   price_class = "PriceClass_100"
 
 #   viewer_certificate {

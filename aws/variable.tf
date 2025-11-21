@@ -76,5 +76,5 @@ variable "dns_domain" {
 }
 
 locals {
-  dns_name = "iot-${var.env}.${var.dns_domain}"
+  dns_name = var.env == "prod" ? "iot.${var.dns_domain}" : "iot-${var.env}.${var.dns_domain}"
 }

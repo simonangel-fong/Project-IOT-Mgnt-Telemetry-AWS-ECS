@@ -1,85 +1,84 @@
-# # ##############################
-# # EFS SG
-# # ##############################
-# resource "aws_security_group" "efs_sg" {
-#   name        = "${var.project}-${var.env}-efs-sg"
-#   description = "Allow NFS access to EFS"
-#   vpc_id      = aws_vpc.vpc.id
+# ##############################
+# EFS SG
+# ##############################
+resource "aws_security_group" "efs_sg" {
+  name        = "${var.project}-${var.env}-efs-sg"
+  description = "Allow NFS access to EFS"
+  vpc_id      = aws_vpc.vpc.id
 
-#   ingress {
-#     from_port   = 2049 # nfs port
-#     to_port     = 2049 # nfs port
-#     protocol    = "tcp"
-#     cidr_blocks = ["0.0.0.0/0"] # anywhere
-#   }
+  ingress {
+    from_port   = 2049 # nfs port
+    to_port     = 2049 # nfs port
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"] # anywhere
+  }
 
-#   egress {
-#     from_port   = 0
-#     to_port     = 0
-#     protocol    = "-1"
-#     cidr_blocks = ["0.0.0.0/0"]
-#   }
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
-#   tags = {
-#     Name = "${var.project}-${var.env}-efs-sg"
-#   }
-# }
+  tags = {
+    Name = "${var.project}-${var.env}-efs-sg"
+  }
+}
 
-# # ##############################
-# # EFS: File system
-# # ##############################
-# resource "aws_efs_file_system" "efs" {
-#   creation_token   = "${var.project}-${var.env}-efs"
-#   performance_mode = "generalPurpose"
-#   throughput_mode  = "bursting"
-#   encrypted        = true
+# ##############################
+# EFS: File system
+# ##############################
+resource "aws_efs_file_system" "efs" {
+  creation_token   = "${var.project}-${var.env}-efs"
+  performance_mode = "generalPurpose"
+  throughput_mode  = "bursting"
+  encrypted        = true
 
-#   lifecycle_policy {
-#     transition_to_ia = "AFTER_30_DAYS"
-#   }
+  lifecycle_policy {
+    transition_to_ia = "AFTER_30_DAYS"
+  }
 
-#   tags = {
-#     Name = "${var.project}-${var.env}-efs"
-#   }
-# }
+  tags = {
+    Name = "${var.project}-${var.env}-efs"
+  }
+}
+
+# ##############################
+# EFS Mount Target
+# ##############################
+resource "aws_efs_mount_target" "efs_mt" {
+  for_each = aws_subnet.private
+
+  file_system_id  = aws_efs_file_system.efs.id
+  subnet_id       = each.value.id
+  security_groups = [aws_security_group.efs_sg.id]
+}
 
 
-# # ##############################
-# # EFS Mount Target
-# # ##############################
-# resource "aws_efs_mount_target" "efs_mt" {
-#   for_each = aws_subnet.private
+# ##############################
+# EFS Access Point
+# ##############################
+resource "aws_efs_access_point" "efs_ap" {
+  file_system_id = aws_efs_file_system.efs.id
 
-#   file_system_id  = aws_efs_file_system.efs.id
-#   subnet_id       = each.value.id
-#   security_groups = [aws_security_group.efs_sg.id]
-# }
+  posix_user {
+    uid = 999
+    gid = 999
+  }
 
+  root_directory {
+    path = "/postgres"
+    creation_info {
+      owner_uid   = 999
+      owner_gid   = 999
+      permissions = "0770"
+    }
+  }
 
-# # ##############################
-# # EFS Access Point
-# # ##############################
-# resource "aws_efs_access_point" "efs_ap" {
-#   file_system_id = aws_efs_file_system.efs.id
+  tags = {
+    Name = "${var.project}-${var.env}-efs-ap"
+  }
 
-#   posix_user {
-#     uid = 999
-#     gid = 999
-#   }
-
-#   root_directory {
-#     path = "/postgres"
-#     creation_info {
-#       owner_uid   = 999
-#       owner_gid   = 999
-#       permissions = "0770"
-#     }
-#   }
-
-#   tags = {
-#     Name = "${var.project}-${var.env}-efs-ap"
-#   }
-
-#   depends_on = [aws_vpc.vpc]
-# }
+  depends_on = [aws_vpc.vpc]
+}
 
