@@ -95,9 +95,10 @@ pip install pytest
 ```sh
 docker build -t fastapi ./app/fastapi
 # tag
-docker tag fastapi simonangelfong/iot-mgnt-telemetry-fastapi
+docker tag fastapi simonangelfong/iot-mgnt-telemetry-fastapi:dev
 # push to docker
-docker push simonangelfong/iot-mgnt-telemetry-fastapi
+docker push simonangelfong/iot-mgnt-telemetry-fastapi:dev
+
 ```
 
 ---

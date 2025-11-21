@@ -1,14 +1,14 @@
 [
   {
     "name": "pgdb",
-    "image": "099139718958.dkr.ecr.ca-central-1.amazonaws.com/demo-ecs-multi-svc/db:latest",
+    "image": "${image}",
     "user": "999:999",
     "cpu": 1024,
     "memory": 4096,
     "essential": true,
     "portMappings": [
       {
-        "name": "db",
+        "name": "pgdb",
         "containerPort": 5432,
         "protocol": "tcp"
       }
@@ -17,15 +17,15 @@
       "logDriver": "awslogs",
       "options": {
         "awslogs-create-group": "true",
-        "awslogs-group": "/ecs/task/demo-ecs-mul-svc-db",
-        "awslogs-region": "ca-central-1",
+        "awslogs-group": "${awslogs_group}",
+        "awslogs-region": "${region}",
         "awslogs-stream-prefix": "ecs"
       }
     },
     "environment": [
-      { "name": "POSTGRES_USER", "value": "postgres" },
-      { "name": "POSTGRES_DB", "value": "postgres" },
-      { "name": "POSTGRES_PASSWORD", "value": "postgres" }
+      { "name": "POSTGRES_USER", "value": "${pgdb_init_user}" },
+      { "name": "POSTGRES_DB", "value": "${pgdb_init_db}" },
+      { "name": "POSTGRES_PASSWORD", "value": "${pgdb_init_pwd}" }
     ],
     "mountPoints": [
       {
@@ -34,6 +34,7 @@
         "readOnly": false
       }
     ],
+    "command": ["postgres", "-c", "config_file=/config/prod.conf"],
     "healthCheck": {
       "command": ["CMD-SHELL", "pg_isready -U postgres -d app_db || exit 1"],
       "interval": 30,

@@ -11,6 +11,15 @@ variable "env" {
   default = "dev"
 }
 
+variable "app_pgdb_init_user" { type = string }
+variable "app_pgdb_init_db" { type = string }
+variable "app_pgdb_init_pwd" { type = string }
+variable "app_pgdb_host" { type = string }
+variable "app_pgdb_db" { type = string }
+variable "app_pgdb_user" { type = string }
+variable "app_pgdb_pwd" { type = string }
+variable "app_redis_host" { type = string }
+
 # ##############################
 # AWS
 # ##############################
@@ -19,8 +28,8 @@ variable "aws_region" { type = string }
 # # ##############################
 # # Cloudflare
 # # ##############################
-# variable "cloudflare_api_token" { type = string }
-# variable "cloudflare_zone_id" { type = string }
+variable "cloudflare_api_token" { type = string }
+variable "cloudflare_zone_id" { type = string }
 
 # ##############################
 # AWS VPC
@@ -70,11 +79,21 @@ variable "vpc_private_subnets" {
   }
 }
 
-# variable "dns_domain" {
-#   type    = string
-#   default = "arguswatcher.net"
-# }
+# ##############################
+# AWS ECR
+# ##############################
+variable "aws_ecr_fastapi" { type = string }
+variable "aws_ecr_pgdb" { type = string }
+variable "aws_ecr_redis" { type = string }
 
-# locals {
-#   dns_name = var.env == "prod" ? "iot.${var.dns_domain}" : "iot-${var.env}.${var.dns_domain}"
-# }
+# ##############################
+# AWS CF + CF
+# ##############################
+variable "dns_domain" {
+  type    = string
+  default = "arguswatcher.net"
+}
+
+locals {
+  dns_name = var.env == "prod" ? "iot.${var.dns_domain}" : "iot-${var.env}.${var.dns_domain}"
+}

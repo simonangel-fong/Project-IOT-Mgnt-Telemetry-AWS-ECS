@@ -1,77 +1,107 @@
+from __future__ import annotations
+
+from functools import lru_cache
 from pathlib import Path
 from typing import Literal
-from functools import lru_cache
 from urllib.parse import quote_plus
+
 from pydantic import BaseModel, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
+# ==============================
+# PostgreSQL
+# ==============================
 class PostgresSettings(BaseModel):
-    """PostgreSQL database configuration"""
+    """PostgreSQL database configuration."""
 
-    host: str = Field(default="postgres", alias="POSTGRES_HOST")
-    port: int = Field(default=5432, alias="POSTGRES_PORT")
-    user: str = Field(default="app_user", alias="POSTGRES_APP_USER")
-    db: str = Field(default="app_db", alias="POSTGRES_APP_DB")
-    password: str = Field(default="postgres", alias="POSTGRES_APP_PASSWORD")
+    host: str = "postgres"
+    port: int = 5432
+    user: str = "app_user"
+    db: str = "app_db"
+    password: str = "postgres"
 
     @property
     def url(self) -> str:
-        """ PostgreSQL connection string"""
-        user = quote_plus(self.user)        # process "/" or ":" in pwd
-        pwd = quote_plus(self.password)     # process "/" or ":" in pwd
+        """
+        SQLAlchemy async connection URL.
+
+        Example:
+            postgresql+asyncpg://user:password@host:5432/db
+        """
+        user = quote_plus(self.user)
+        pwd = quote_plus(self.password)
         return f"postgresql+asyncpg://{user}:{pwd}@{self.host}:{self.port}/{self.db}"
 
 
+# ==============================
+# Redis
+# ==============================
 class RedisSettings(BaseModel):
-    """Redis configuration"""
+    """Redis configuration."""
 
-    host: str = Field(default="redis", alias="REDIS_HOST")
-    port: int = Field(default=6379, alias="REDIS_PORT")
-    db: int = Field(default=0, alias="REDIS_DB")
-    password: str | None = Field(default=None, alias="REDIS_PASSWORD")
+    host: str = "redis"
+    port: int = 6379
+    db: int = 0
+    password: str | None = None
 
     @property
     def url(self) -> str:
+        """
+        Redis connection URL.
+
+        Example:
+            redis://:password@host:6379/0
+            redis://host:6379/0
+        """
         if self.password:
             pwd = quote_plus(self.password)
             return f"redis://:{pwd}@{self.host}:{self.port}/{self.db}"
         return f"redis://{self.host}:{self.port}/{self.db}"
 
 
+# ==============================
+# Application Settings
+# ==============================
 class Settings(BaseSettings):
-    """Application settings"""
+    """Application settings."""
 
-    app_name: str = Field(default="Demo Iot management", alias="APP_NAME")
-    debug: bool = Field(default=True, alias="DEBUG")
-    env: Literal["dev", "staging", "prod"] = Field(default="dev", alias="ENV")
+    # General
+    app_name: str = "Iot management telemetry"
+    debug: bool = True
+    env: Literal["dev", "staging", "prod"] = "dev"
 
+    # Nested config
+    postgres: PostgresSettings = PostgresSettings()
+    redis: RedisSettings = RedisSettings()
+
+    # Pydantic Settings config
     model_config = SettingsConfigDict(
-        env_file=str(
-            Path(__file__).parent.parent.parent / ".env"),     # project root .env
+        # project root .env
+        env_file=str(Path(__file__).resolve().parent.parent.parent / ".env"),
         env_file_encoding="utf-8",
-        extra="ignore",         # ignore extra fields:
+        extra="ignore",               # ignore unknown env vars
+        env_nested_delimiter="__",    # POSTGRES__HOST -> settings.postgres.host
     )
 
-    # Database
-    postgres: PostgresSettings = Field(default_factory=PostgresSettings)
-    # Redis
-    redis: RedisSettings = Field(default_factory=RedisSettings)
-
+    # Convenience properties
     @property
     def postgres_url(self) -> str:
-        """Postgres connection URL"""
+        """Postgres connection URL."""
         return self.postgres.url
 
     @property
     def redis_url(self) -> str:
-        """Redis connection URL"""
+        """Redis connection URL."""
         return self.redis.url
 
 
+# ==============================
+# Settings singleton
+# ==============================
 @lru_cache(maxsize=1)
 def get_settings() -> Settings:
     """
-    Cached Settings instance.
+    Get a cached Settings instance.
     """
     return Settings()

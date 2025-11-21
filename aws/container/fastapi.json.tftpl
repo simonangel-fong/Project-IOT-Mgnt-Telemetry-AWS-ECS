@@ -1,0 +1,49 @@
+[
+  {
+    "name": "fastapi",
+    "image": "${image}",
+    "cpu": 1024,
+    "memory": 2048,
+    "essential": true,
+    "portMappings": [
+      {
+        "name": "fastapi",
+        "containerPort": 8000,
+        "protocol": "tcp"
+      }
+    ],
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {
+        "awslogs-create-group": "true",
+        "awslogs-group": "${awslogs_group}",
+        "awslogs-region": "${region}",
+        "awslogs-stream-prefix": "ecs"
+      }
+    },
+    "environment": [
+      { "name": "APP_NAME", "value": "${app_name}" },
+      { "name": "ENV", "value": "${env}" },
+      { "name": "DEBUG", "value": "${debug}" },
+      { "name": "POSTGRES__HOST", "value": "${pgdb_host}" },
+      { "name": "POSTGRES__PORT", "value": "5432" },
+      { "name": "POSTGRES__DB", "value": "${pgdb_db}" },
+      { "name": "POSTGRES__USER", "value": "${pgdb_user}" },
+      { "name": "POSTGRES__PASSWORD", "value": "${pgdb_pwd}" },
+
+      { "name": "REDIS__HOST", "value": "${redis_host}" },
+      { "name": "REDIS__PORT", "value": "6379" },
+      { "name": "REDIS__DB", "value": "0" }
+    ],
+    "healthCheck": {
+      "command": [
+        "CMD-SHELL",
+        "curl -f http://localhost:8000/health || exit 1"
+      ],
+      "interval": 30,
+      "timeout": 5,
+      "retries": 3,
+      "startPeriod": 15
+    }
+  }
+]

@@ -6,6 +6,7 @@
 
   - [FastAPI](./doc/fastapi/fastapi.md)
   - [PostgreSQL](./doc/postgres/postgres.md)
+  - [Redis](./doc/redis/redis.md)
 
 - Testing
 
