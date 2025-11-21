@@ -70,11 +70,11 @@ variable "vpc_private_subnets" {
   }
 }
 
-variable "dns_domain" {
-  type    = string
-  default = "arguswatcher.net"
-}
+# variable "dns_domain" {
+#   type    = string
+#   default = "arguswatcher.net"
+# }
 
-locals {
-  dns_name = var.env == "prod" ? "iot.${var.dns_domain}" : "iot-${var.env}.${var.dns_domain}"
-}
+# locals {
+#   dns_name = var.env == "prod" ? "iot.${var.dns_domain}" : "iot-${var.env}.${var.dns_domain}"
+# }
