@@ -16,11 +16,11 @@ variable "env" {
 # ##############################
 variable "aws_region" { type = string }
 
-# ##############################
-# Cloudflare
-# ##############################
-variable "cloudflare_api_token" { type = string }
-variable "cloudflare_zone_id" { type = string }
+# # ##############################
+# # Cloudflare
+# # ##############################
+# variable "cloudflare_api_token" { type = string }
+# variable "cloudflare_zone_id" { type = string }
 
 # ##############################
 # AWS VPC

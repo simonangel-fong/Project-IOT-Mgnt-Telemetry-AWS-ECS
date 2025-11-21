@@ -36,7 +36,7 @@ provider "aws" {
   }
 }
 
-# Configure the cloudflare Provider
-provider "cloudflare" {
-  api_token = var.cloudflare_api_token
-}
+# # Configure the cloudflare Provider
+# provider "cloudflare" {
+#   api_token = var.cloudflare_api_token
+# }
