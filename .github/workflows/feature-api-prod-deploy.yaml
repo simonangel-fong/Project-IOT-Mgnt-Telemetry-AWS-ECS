@@ -218,6 +218,7 @@ jobs:
     needs: 
       - ecr-push-fastapi
       - ecr-push-pgdb
+      - ecr-push-redis
     runs-on: ubuntu-latest
     timeout-minutes: 90
     environment: prod
@@ -230,27 +231,27 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-  #     - name: Setup Terraform
-  #       uses: hashicorp/setup-terraform@v3
-  #       with:
-  #         terraform_version: ${{ vars.TF_VERSION }}
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ vars.TF_VERSION }}
 
-  #     - name: Configure AWS credentials (OIDC)
-  #       uses: aws-actions/configure-aws-credentials@v4
-  #       with:
-  #         role-to-assume: ${{ secrets.AWS_TF_ROLE_ARN}}
-  #         aws-region: ${{ vars.AWS_REGION }}
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_TF_ROLE_ARN}}
+          aws-region: ${{ vars.AWS_REGION }}
 
-  #     - name: Configure Terraform plugin cache
-  #       run: |
-  #         mkdir -pv ${{ env.TF_PLUGIN_CACHE_DIR }}
-  #         echo 'plugin_cache_dir = "${{ env.TF_PLUGIN_CACHE_DIR }}"' > ~/.terraformrc
+      - name: Configure Terraform plugin cache
+        run: |
+          mkdir -pv ${{ env.TF_PLUGIN_CACHE_DIR }}
+          echo 'plugin_cache_dir = "${{ env.TF_PLUGIN_CACHE_DIR }}"' > ~/.terraformrc
 
-  #     - name: Cache Terraform plugins
-  #       uses: actions/cache@v4
-  #       with:
-  #         path: ${{ env.TF_PLUGIN_CACHE_DIR }}
-  #         key: ${{ runner.os }}-terraform-${{ vars.TF_VERSION }}
+      - name: Cache Terraform plugins
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.TF_PLUGIN_CACHE_DIR }}
+          key: ${{ runner.os }}-terraform-${{ vars.TF_VERSION }}
 
   #     - name: Terraform init - S3 backend
   #       working-directory: ${{ env.TF_DIR }}
