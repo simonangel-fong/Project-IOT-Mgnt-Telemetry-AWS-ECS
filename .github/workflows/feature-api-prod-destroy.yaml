@@ -31,9 +31,19 @@ jobs:
       TF_VAR_app_pgdb_init_pwd: ${{ secrets.APP_PGDB_INIT_PWD }}
       TF_VAR_cloudflare_api_token: ${{ secrets.CF_API_TOKEN }}
       TF_VAR_cloudflare_zone_id: ${{ secrets.CF_ZONE_ID }}
+      TF_init: true
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Read .ini
+        run: |
+          TF_INIT_CONTENT=$(cat aws/terraform.init)
+          echo "TF_INIT=$SECRET_CONTENT" >> $GITHUB_ENV
+
+      - name: test
+        run: |
+          echo ${{ env.TF_INIT }}
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
