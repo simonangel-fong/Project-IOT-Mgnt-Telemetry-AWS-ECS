@@ -40,7 +40,8 @@ jobs:
         run: |
           pwd
           ls -l
-          ls -l aws
+          cd aws
+          ls -l
           TF_INIT_CONTENT=$(cat aws/terraform.ini)
           echo "TF_INIT=$SECRET_CONTENT" >> $GITHUB_ENV
 
