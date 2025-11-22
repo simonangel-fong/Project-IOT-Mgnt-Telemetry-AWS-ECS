@@ -17,7 +17,7 @@ jobs:
     timeout-minutes: 90
     environment: prod
     env:
-      TF_DIR: aws
+      TF_DIR: aws/
       TF_PLUGIN_CACHE_DIR: /home/runner/.terraform.d/plugin-cache
       TF_VAR_aws_region: ${{ vars.AWS_REGION }}
       TF_VAR_env: ${{ vars.ENV }}
@@ -65,6 +65,7 @@ jobs:
       - name: Terraform init - S3 backend
         working-directory: ${{ env.TF_DIR }}
         run: |
+          terraform --version
           terraform init -reconfigure -input=false \
             -backend-config="bucket=${{ vars.AWS_BACKEND_BUCKET }}" \
             -backend-config="region=${{ vars.AWS_REGION }}" \
