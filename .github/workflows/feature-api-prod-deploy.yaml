@@ -145,22 +145,22 @@ jobs:
             <p><b>Commit</b>: ${{ github.sha }}</p>
             <p><a href="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}">View Workflow Run</a></p>
 
-  # deploy:
-  #   name: Deploy(Prod)
-  #   needs: 
-  #     - ecr-push-fastapi
-  #     - ecr-push-pgdb
-  #   runs-on: ubuntu-latest
-  #   timeout-minutes: 90
-  #   environment: prod
-  #   env:
-  #     TF_DIR: aws
-  #     TF_PLUGIN_CACHE_DIR: /home/runner/.terraform.d/plugin-cache
-  #     TF_VAR_aws_region: ${{ vars.AWS_REGION }}
-  #     TF_VAR_env: ${{ vars.ENV }}
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v4
+  deploy:
+    name: Deploy(Prod)
+    needs: 
+      - ecr-push-fastapi
+      - ecr-push-pgdb
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    environment: prod
+    env:
+      TF_DIR: aws
+      TF_PLUGIN_CACHE_DIR: /home/runner/.terraform.d/plugin-cache
+      TF_VAR_aws_region: ${{ vars.AWS_REGION }}
+      TF_VAR_env: ${{ vars.ENV }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
   #     - name: Setup Terraform
   #       uses: hashicorp/setup-terraform@v3
