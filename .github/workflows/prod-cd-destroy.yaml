@@ -9,6 +9,10 @@ on:
         required: true
         type: string
 
+  schedule:
+    # 17:00 toronto time
+    - cron: "0 22 * * *"  
+
 concurrency:
   group: prod-destroy-${{ github.ref_name }}
   cancel-in-progress: false # keep in-progress jobs
@@ -20,8 +24,11 @@ permissions:
 jobs:
   destroy:
     name: Destroy(Prod)
-    # destroy only if yes
-    if: github.event.inputs.confirm_destroy == 'YES'  
+    # destroy only if yes or schedult
+    if: >
+      (github.event_name == 'workflow_dispatch' &&
+       github.event.inputs.confirm_destroy == 'YES') ||
+      (github.event_name == 'schedule')
     runs-on: ubuntu-latest
     timeout-minutes: 90
     environment: prod
