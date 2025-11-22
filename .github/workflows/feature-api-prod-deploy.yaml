@@ -262,29 +262,29 @@ jobs:
             -backend-config="key=${{ vars.PROJECT }}-${{vars.APP}}/${{ vars.ENV }}/terraform.tfstate" \
             -backend-config="encrypt=true"
 
-  #     - name: Terraform Validate
-  #       working-directory: ${{ env.TF_DIR }}
-  #       run: |
-  #         terraform fmt -check -recursive -no-color
-  #         terraform validate -no-color
+      - name: Terraform Validate
+        working-directory: ${{ env.TF_DIR }}
+        run: |
+          terraform fmt -check -recursive -no-color
+          terraform validate -no-color
 
-  #     - name: Terraform Plan
-  #       working-directory: ${{ env.TF_DIR }}
-  #       id: plan
-  #       run: terraform plan -out=tfplan -input=false -no-color
+      - name: Terraform Plan
+        working-directory: ${{ env.TF_DIR }}
+        id: plan
+        run: terraform plan -out=tfplan -input=false -no-color
 
-  #     - name: Show plan (JSON)
-  #       working-directory: ${{ env.TF_DIR }}
-  #       run: terraform show -json tfplan > tfplan.json
+      - name: Show plan (JSON)
+        working-directory: ${{ env.TF_DIR }}
+        run: terraform show -json tfplan > tfplan.json
 
-  #     - name: Save plan artifacts
-  #       uses: actions/upload-artifact@v4
-  #       with:
-  #         name: tfplan-bundle
-  #         path: |
-  #           ${{ env.TF_DIR }}/tfplan
-  #           ${{ env.TF_DIR }}/tfplan.json
-  #         retention-days: 3
+      - name: Save plan artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfplan-bundle
+          path: |
+            ${{ env.TF_DIR }}/tfplan
+            ${{ env.TF_DIR }}/tfplan.json
+          retention-days: 3
 
   #     - name: Terraform Apply
   #       working-directory: ${{ env.TF_DIR }}
