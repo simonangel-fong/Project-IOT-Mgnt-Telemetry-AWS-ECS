@@ -16,6 +16,7 @@ permissions:
 
 jobs:
   ecr-push-fastapi:
+    name: Push Image to ECR - FastAPI(Dev)
     runs-on: ubuntu-latest
     environment: dev
     env:
@@ -82,6 +83,7 @@ jobs:
             <p><a href="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}">View Workflow Run</a></p>
 
   ecr-push-pgdb:
+    name: Push Image to ECR - Postgres(Dev)
     runs-on: ubuntu-latest
     environment: dev
     env:
@@ -120,6 +122,74 @@ jobs:
           push: true
           context: ${{ env.DIR_DOCKFILE }}
           labels: ${{ steps.postgres-meta.outputs.labels }}
+          tags: "${{ env.ECR_REPOSITORY }}:${{ vars.ENV }}"
+
+      - name: Send email notification
+        if: failure()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          secure: true
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: "${{ job.status }} - ${{ github.workflow }}: ${{ vars.PROJECT}} ${{vars.APP}} (${{vars.ENV}})"
+          to: ${{ secrets.EMAIL_USERNAME }}
+          from: ${{ secrets.EMAIL_USERNAME }}
+          html_body: |
+            <h2>GitHub Actions CI/CD Notification</h2>
+            <p><b>Project</b>: ${{ vars.PROJECT}}</p>
+            <p><b>Application</b>: ${{ vars.APP}}</p>
+            <p><b>Repository</b>: ${{ github.repository }}</p>
+            <p><b>Env</b>: ${{ vars.ENV }}</p>
+            <p><b>Job</b>: ${{ github.job }}</p>
+            <p><b>Status</b>: ${{ job.status }}</p>
+            <p><b>Branch</b>: ${{ github.ref }}</p>
+            <p><b>Workflow</b>: ${{ github.workflow }}</p>
+            <p><b>Commit</b>: ${{ github.sha }}</p>
+            <p><a href="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}">View Workflow Run</a></p>
+
+
+  ecr-push-redis:
+    name: Push Image to ECR - Redis(Dev)
+    runs-on: ubuntu-latest
+    environment: dev
+    env:
+      AWS_REGION: ${{ vars.AWS_REGION }}
+      AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+      DIR_DOCKFILE: app/pgdb
+      ECR_REPOSITORY: "${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com/${{ vars.PROJECT }}-${{vars.APP}}-redis"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_TF_ROLE_ARN}}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Redis - Extract metadata
+        id: redis-meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.ECR_REPOSITORY }}
+
+      - name: Redis - Build and push Docker image
+        id: redis-push
+        uses: docker/build-push-action@v3
+        with:
+          push: true
+          context: ${{ env.DIR_DOCKFILE }}
+          labels: ${{ steps.redis-meta.outputs.labels }}
           tags: "${{ env.ECR_REPOSITORY }}:${{ vars.ENV }}"
 
       - name: Send email notification
