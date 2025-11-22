@@ -47,7 +47,7 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: 'pip'
-          cache-dependency-path: requirements.txt
+          cache-dependency-path: app/fastapi/requirements.txt
       
       - name: Install dependencies
         run: |
