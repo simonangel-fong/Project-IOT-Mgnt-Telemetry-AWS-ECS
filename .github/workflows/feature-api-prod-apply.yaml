@@ -1,4 +1,4 @@
-name: Deploy(Prod)
+name: Apply(Prod)
 
 on:
   workflow_dispatch:
@@ -9,7 +9,7 @@ on:
       - "app/fastapi/**"
       - "app/pgdb/**"
       - "aws/**"
-      - ".github/workflows/feature-api-prod-deploy.yaml"
+      - ".github/workflows/feature-api-prod-apply.yaml"
 
 permissions:
   id-token: write
