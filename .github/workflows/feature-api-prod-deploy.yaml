@@ -5,6 +5,11 @@ on:
   push:
     branches:
       - "master"
+    paths:
+      - "app/fastapi/**"
+      - "app/pgdb/**"
+      - "aws/**"
+      - ".github/workflows/feature-api-prod-deploy.yaml"
 
 permissions:
   id-token: write
