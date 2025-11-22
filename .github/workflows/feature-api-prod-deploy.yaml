@@ -227,6 +227,19 @@ jobs:
       TF_PLUGIN_CACHE_DIR: /home/runner/.terraform.d/plugin-cache
       TF_VAR_aws_region: ${{ vars.AWS_REGION }}
       TF_VAR_env: ${{ vars.ENV }}
+      AWS_ECR_FASTAPI: "${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com/${{ vars.PROJECT }}-${{vars.APP}}-fastapi:${{vars.ENV}}"
+      AWS_ECR_PGDB: "${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com/${{ vars.PROJECT }}-${{vars.APP}}-pgdb:${{vars.ENV}}"
+      AWS_ECR_REDIS: "${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com/${{ vars.PROJECT }}-${{vars.APP}}-redis:${{vars.ENV}}"
+      TF_VAR_app_pgdb_host: ${{ vars.APP_PGDB_HOST }}
+      TF_VAR_app_pgdb_db  : ${{ vars.APP_PGDB_DB }}
+      TF_VAR_app_pgdb_user  : ${{ vars.APP_PGDB_USER }}
+      TF_VAR_app_pgdb_pwd  : ${{ secrets.APP_PGDB_PWD }}
+      TF_VAR_app_redis_host : ${{ vars.APP_REDIS_HOST }}
+      TF_VAR_app_pgdb_init_user : ${{ vars.APP_PGDB_INIT_USER }}
+      TF_VAR_app_pgdb_init_db : ${{ vars.APP_PGDB_INIT_DB }}
+      TF_VAR_app_pgdb_init_pwd : ${{ secrets.APP_PGDB_INIT_PWD }}
+      TF_VAR_cloudflare_api_token : ${{ secrets.CF_API_TOKEN }}
+      TF_VAR_cloudflare_zone_id : ${{ secrets.CF_ZONE_ID }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
