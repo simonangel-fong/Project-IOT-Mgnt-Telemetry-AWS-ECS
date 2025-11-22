@@ -20,6 +20,12 @@ data "aws_iam_policy_document" "task_assume_policy" {
 # cluster
 resource "aws_ecs_cluster" "ecs_cluster" {
   name = "${var.project}-${var.env}-cluster"
+
+  # enable container insight
+  setting {
+    name  = "containerInsights"
+    value = "enabled"
+  }
 }
 
 # #################################

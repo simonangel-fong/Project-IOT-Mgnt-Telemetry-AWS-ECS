@@ -7,6 +7,7 @@ resource "aws_security_group" "efs_sg" {
   vpc_id      = aws_vpc.vpc.id
 
   ingress {
+    description = "Allow nfs ingress"
     from_port   = 2049 # nfs port
     to_port     = 2049 # nfs port
     protocol    = "tcp"
@@ -14,6 +15,7 @@ resource "aws_security_group" "efs_sg" {
   }
 
   egress {
+    description = "Allow all egress"
     from_port   = 0
     to_port     = 0
     protocol    = "-1"

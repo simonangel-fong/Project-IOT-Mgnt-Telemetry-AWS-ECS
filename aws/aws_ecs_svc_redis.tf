@@ -45,6 +45,7 @@ resource "aws_security_group" "sg_redis" {
   vpc_id      = aws_vpc.vpc.id
 
   ingress {
+    description     = "Allow fastapi ingress"
     from_port       = 6379
     to_port         = 6379
     protocol        = "tcp"
@@ -52,6 +53,7 @@ resource "aws_security_group" "sg_redis" {
   }
 
   egress {
+    description = "Allow all egress"
     from_port   = 0
     to_port     = 0
     protocol    = "-1"

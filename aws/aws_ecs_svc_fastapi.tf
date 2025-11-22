@@ -48,18 +48,21 @@ resource "aws_security_group" "sg_fastapi" {
   vpc_id      = aws_vpc.vpc.id
 
   ingress {
+    description     = "Allow load balancer to ingress"
     from_port       = 8000
     to_port         = 8000
     protocol        = "tcp"
     security_groups = [aws_security_group.sg_lb.id] # limit source: sg_lb
   }
 
+  # Egress to vpc only
   egress {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
 
   tags = {
     Name = "${var.project}-${var.env}-sg-api"
@@ -72,6 +75,11 @@ resource "aws_security_group" "sg_fastapi" {
 resource "aws_cloudwatch_log_group" "log_group_fastapi" {
   name              = local.svc_fastapi_log_group_name
   retention_in_days = 7
+  kms_key_id        = aws_kms_key.cloudwatch_logs.arn
+
+  tags = {
+    Name = "${var.project}-${var.env}-log-group-fastapi"
+  }
 }
 
 # #################################
