@@ -15,7 +15,7 @@ def test_home_basic_response():
     - has core fields
     """
     client = get_client()
-    resp = client.get("/")
+    resp = client.get("/api")
     assert resp.status_code == 200
 
     data = resp.json()
@@ -45,7 +45,7 @@ def test_home_debug_false(monkeypatch):
     client = get_client()
 
     # Act
-    resp = client.get("/")
+    resp = client.get("/api")
     assert resp.status_code == 200
     data = resp.json()
 
@@ -68,7 +68,7 @@ def test_home_debug_true(monkeypatch):
     client = get_client()
 
     # Act
-    resp = client.get("/")
+    resp = client.get("/api")
     assert resp.status_code == 200
     data = resp.json()
 
