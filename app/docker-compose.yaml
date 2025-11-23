@@ -121,6 +121,6 @@ services:
       dockerfile: Dockerfile
     environment:
       - INTERVAL=1
-      - REMOTE=nginx:8080
+      # - TARGET_URL=https://iot-dev.arguswatcher.net/api/telemetry
     networks:
       - public_network

@@ -90,7 +90,7 @@ resource "aws_ecs_task_definition" "ecs_task_redis" {
 
   # method: template file
   container_definitions = templatefile("${path.module}/container/redis.json.tftpl", {
-    image         = "${var.aws_ecr_redis}:${var.env}"
+    image         = local.ecr_redis
     awslogs_group = local.svc_redis_log_group_name
     region        = var.aws_region
   })

@@ -24,6 +24,7 @@ variable "app_redis_host" { type = string }
 # AWS
 # ##############################
 variable "aws_region" { type = string }
+data "aws_caller_identity" "current" {}
 
 # # ##############################
 # # Cloudflare
@@ -82,9 +83,12 @@ variable "vpc_private_subnets" {
 # ##############################
 # AWS ECR
 # ##############################
-variable "aws_ecr_fastapi" { type = string }
-variable "aws_ecr_pgdb" { type = string }
-variable "aws_ecr_redis" { type = string }
+locals {
+  ecr_fastapi = "${data.aws_caller_identity.current.account_id}.dkr.ecr.${var.aws_region}.amazonaws.com/${var.project}-fastapi:${var.env}"
+  ecr_pgdb    = "${data.aws_caller_identity.current.account_id}.dkr.ecr.${var.aws_region}.amazonaws.com/${var.project}-pgdb:${var.env}"
+  ecr_redis   = "${data.aws_caller_identity.current.account_id}.dkr.ecr.${var.aws_region}.amazonaws.com/${var.project}-redis:${var.env}"
+  ecr_device  = "${data.aws_caller_identity.current.account_id}.dkr.ecr.${var.aws_region}.amazonaws.com/${var.project}-device:${var.env}"
+}
 
 # ##############################
 # AWS CF + CF
@@ -96,4 +100,9 @@ variable "dns_domain" {
 
 locals {
   dns_name = var.env == "prod" ? "iot.${var.dns_domain}" : "iot-${var.env}.${var.dns_domain}"
+  post_url = "https://${local.dns_name}/api/telemetry"
+}
+
+output "test" {
+  value = local.post_url
 }

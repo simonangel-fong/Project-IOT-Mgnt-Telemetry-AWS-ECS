@@ -7,8 +7,8 @@
 // ==============================
 
 // Base URL for your *dev* API
-// const BASE_URL = "https://iot-dev.arguswatcher.net";
-const BASE_URL = "http://localhost:8080";
+const BASE_URL = "https://iot-dev.arguswatcher.net";
+// const BASE_URL = "http://localhost:8080";
 
 // ==============================
 // Import helpers from utils.js
@@ -28,7 +28,7 @@ const state = {
   devices: [],
   currentDevice: null,
   pollingTimer: null,
-  pollingIntervalMs: 1000,
+  pollingIntervalMs: 1000,  // 1s
 };
 
 // ==============================

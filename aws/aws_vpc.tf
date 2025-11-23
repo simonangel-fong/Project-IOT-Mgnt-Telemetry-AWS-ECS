@@ -174,3 +174,37 @@ resource "aws_vpc_endpoint" "logs" {
     Name = "${var.project}-${var.env}-vpc-endpoint-logs"
   }
 }
+
+# #################################
+# SG: Interface Endpoints
+# #################################
+resource "aws_security_group" "sg_vpc_ep" {
+  name        = "${var.project}-${var.env}-sg-vpc-endpoint"
+  description = "Security group for VPC interface endpoints (ECR API/DKR)"
+  vpc_id      = aws_vpc.vpc.id
+
+  ingress {
+    description = "Allow HTTPS ingress"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    security_groups = [
+      aws_security_group.sg_pgdb.id,    # allow db task
+      aws_security_group.sg_fastapi.id, # allow api task
+      aws_security_group.sg_redis.id,   # allow api task
+      aws_security_group.sg_device.id,  # allow device task
+    ]
+  }
+
+  egress {
+    description = "Allow all egress"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "${var.project}-${var.env}-sg-vpc-endpoint"
+  }
+}

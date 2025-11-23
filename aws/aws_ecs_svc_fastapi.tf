@@ -10,32 +10,32 @@ locals {
 # IAM: ECS Task Execution Role
 # #################################
 # assume role
-resource "aws_iam_role" "ecs_task_execution_role_api" {
-  name               = "${var.project}-${var.env}-task-execution-role-api"
+resource "aws_iam_role" "ecs_task_execution_role_fastapi" {
+  name               = "${var.project}-${var.env}-task-execution-role-fastapi"
   assume_role_policy = data.aws_iam_policy_document.task_assume_policy.json
 
   tags = {
     Project = var.project
-    Role    = "ecs-task-execution-role-api"
+    Role    = "ecs-task-execution-role-fastapi"
   }
 }
 
 # policy attachment: exec role
-resource "aws_iam_role_policy_attachment" "ecs_task_execution_role_policy_api" {
-  role       = aws_iam_role.ecs_task_execution_role_api.name
+resource "aws_iam_role_policy_attachment" "ecs_task_execution_role_policy_fastapi" {
+  role       = aws_iam_role.ecs_task_execution_role_fastapi.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
 # #################################
 # IAM: ECS Task Role
 # #################################
-resource "aws_iam_role" "ecs_task_role_api" {
-  name               = "${var.project}-${var.env}-task-role-api"
+resource "aws_iam_role" "ecs_task_role_fastapi" {
+  name               = "${var.project}-${var.env}-task-role-fastapi"
   assume_role_policy = data.aws_iam_policy_document.task_assume_policy.json
 
   # tags = {
   #   Project = var.project
-  #   Role    = "ecs-task-role-api"
+  #   Role    = "ecs-task-role-fastapi"
   # }
 }
 
@@ -43,7 +43,7 @@ resource "aws_iam_role" "ecs_task_role_api" {
 # Security Group
 # ##############################
 resource "aws_security_group" "sg_fastapi" {
-  name        = "${var.project}-${var.env}-sg-api"
+  name        = "${var.project}-${var.env}-sg-fastapi"
   description = "App security group"
   vpc_id      = aws_vpc.vpc.id
 
@@ -91,18 +91,18 @@ resource "aws_ecs_task_definition" "ecs_task_fastapi" {
   network_mode             = "awsvpc"
   cpu                      = 1024
   memory                   = 2048
-  execution_role_arn       = aws_iam_role.ecs_task_execution_role_api.arn
-  task_role_arn            = aws_iam_role.ecs_task_role_api.arn
+  execution_role_arn       = aws_iam_role.ecs_task_execution_role_fastapi.arn
+  task_role_arn            = aws_iam_role.ecs_task_role_fastapi.arn
 
   # method: json file
   # container_definitions = file("./container/fastapi.json")
 
   # method: template file
   container_definitions = templatefile("${path.module}/container/fastapi.json.tftpl", {
-    image         = "${var.aws_ecr_fastapi}:${var.env}"
+    image         = local.ecr_fastapi
     awslogs_group = local.svc_fastapi_log_group_name
     region        = var.aws_region
-    app_name      = var.project
+    project       = var.project
     env           = var.env
     debug         = local.debug
     pgdb_host     = var.app_pgdb_host
@@ -151,7 +151,7 @@ resource "aws_ecs_service" "ecs_svc_fastapi" {
 
     service {
       discovery_name = "fastapi" # the name refered by other services refer
-      port_name      = "fastapi" # must match port name in api.json
+      port_name      = "fastapi" # must match port name in fastapi.json
 
       client_alias {
         port     = 8000
@@ -186,7 +186,7 @@ resource "aws_appautoscaling_target" "scaling_target_fastapi" {
 
 # scaling policy: cpu
 resource "aws_appautoscaling_policy" "scaling_cpu_fastapi" {
-  name               = "${var.project}-scale-cpu-api"
+  name               = "${var.project}-scale-cpu-fastapi"
   resource_id        = aws_appautoscaling_target.scaling_target_fastapi.resource_id
   scalable_dimension = aws_appautoscaling_target.scaling_target_fastapi.scalable_dimension
   service_namespace  = aws_appautoscaling_target.scaling_target_fastapi.service_namespace
@@ -203,7 +203,7 @@ resource "aws_appautoscaling_policy" "scaling_cpu_fastapi" {
 }
 
 resource "aws_appautoscaling_policy" "scaling_memory_fastapi" {
-  name               = "${var.project}-scale-memory-api"
+  name               = "${var.project}-scale-memory-fastapi"
   resource_id        = aws_appautoscaling_target.scaling_target_fastapi.resource_id
   scalable_dimension = aws_appautoscaling_target.scaling_target_fastapi.scalable_dimension
   service_namespace  = aws_appautoscaling_target.scaling_target_fastapi.service_namespace

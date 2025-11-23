@@ -14,12 +14,13 @@ from utils import *
 DEVICES_FILE: str = os.getenv("DEVICES_FILE", "devices.json")
 INTERVAL: float = get_env_float("INTERVAL", 10.0)     # default 10s
 
-REMOTE: str = os.getenv("REMOTE", "localhost:8080")
-REMOTE = REMOTE.rstrip("/")
+TARGET_URL: str = os.getenv(
+    "TARGET_URL", "http://localhost:8080/api/telemetry")
+TARGET_URL = TARGET_URL.rstrip("/")
 
 
-if not REMOTE:
-    print("ERROR: REMOTE environment variable is required.", file=sys.stderr)
+if not TARGET_URL:
+    print("ERROR: TARGET_URL environment variable is required.", file=sys.stderr)
     sys.exit(1)
 
 # ==============================
@@ -36,7 +37,7 @@ logging.basicConfig(
 # ==============================
 def main() -> None:
     logging.info("Starting telemetry simulator")
-    logging.info("REMOTE=%s", REMOTE)
+    logging.info("TARGET_URL=%s", TARGET_URL)
     logging.info("INTERVAL=%.2f seconds", INTERVAL)
     logging.info("DEVICES_FILE=%s", DEVICES_FILE)
 
@@ -54,9 +55,9 @@ def main() -> None:
 
             # loop all devices
             for device in devices:
-                (x_cood, y_cood) = random_coordinates()
+                # (x_cood, y_cood) = random_coordinates()
                 payload = build_payload(now_utc_iso())
-                target_url = f"http://{REMOTE}/api/telemetry"
+                target_url = TARGET_URL
                 send_telemetry(device, target_url, payload)
 
             # set interval

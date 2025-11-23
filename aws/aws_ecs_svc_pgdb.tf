@@ -170,7 +170,7 @@ resource "aws_ecs_task_definition" "ecs_task_pgdb" {
 
   # method: template file
   container_definitions = templatefile("${path.module}/container/pgdb.json.tftpl", {
-    image          = "${var.aws_ecr_pgdb}:${var.env}"
+    image          = local.ecr_pgdb
     awslogs_group  = local.svc_pgdb_log_group_name
     region         = var.aws_region
     pgdb_init_user = var.app_pgdb_init_user
@@ -222,37 +222,4 @@ resource "aws_ecs_service" "ecs_svc_pgdb" {
     aws_vpc_endpoint.ecr_dkr,
     aws_vpc_endpoint.s3,
   ]
-}
-
-# #################################
-# SG: Interface Endpoints
-# #################################
-resource "aws_security_group" "sg_vpc_ep" {
-  name        = "${var.project}-${var.env}-sg-vpc-endpoint"
-  description = "Security group for VPC interface endpoints (ECR API/DKR)"
-  vpc_id      = aws_vpc.vpc.id
-
-  ingress {
-    description = "Allow HTTPS ingress"
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    security_groups = [
-      aws_security_group.sg_pgdb.id,    # allow db task
-      aws_security_group.sg_fastapi.id, # allow api task
-      aws_security_group.sg_redis.id,   # allow api task
-    ]
-  }
-
-  egress {
-    description = "Allow all egress"
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags = {
-    Name = "${var.project}-${var.env}-sg-vpc-endpoint"
-  }
 }
