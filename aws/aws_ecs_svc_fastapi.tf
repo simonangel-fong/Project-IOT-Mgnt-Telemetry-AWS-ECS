@@ -65,7 +65,7 @@ resource "aws_security_group" "sg_fastapi" {
 
 
   tags = {
-    Name = "${var.project}-${var.env}-sg-api"
+    Name = "${var.project}-${var.env}-sg-fastapi"
   }
 }
 
@@ -113,7 +113,7 @@ resource "aws_ecs_task_definition" "ecs_task_fastapi" {
   })
 
   tags = {
-    Name = "${var.project}-${var.env}-task-api"
+    Name = "${var.project}-${var.env}-task-fastapi"
   }
 }
 
@@ -161,7 +161,7 @@ resource "aws_ecs_service" "ecs_svc_fastapi" {
   }
 
   tags = {
-    Name = "${var.project}-${var.env}-service-api"
+    Name = "${var.project}-${var.env}-service-fastapi"
   }
 
   depends_on = [

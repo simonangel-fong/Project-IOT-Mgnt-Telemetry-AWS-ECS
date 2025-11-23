@@ -89,9 +89,10 @@ function findDeviceByAlias(alias) {
 async function fetchTelemetry(device) {
   if (!device) return null;
 
-  const url = `${BASE_URL}/telemetry/latest/${encodeURIComponent(
+  const url = `${BASE_URL}/api/telemetry/latest/${encodeURIComponent(
     device.device_uuid
   )}`;
+  console.log(url);
 
   const res = await fetch(url, {
     headers: {
@@ -99,7 +100,6 @@ async function fetchTelemetry(device) {
       Accept: "application/json",
     },
   });
-  console.log("fdfsfd");
 
   if (!res.ok) {
     console.error("Telemetry fetch failed", res.status, await res.text());

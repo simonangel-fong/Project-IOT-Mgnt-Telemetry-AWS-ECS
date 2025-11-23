@@ -61,12 +61,12 @@ services:
 
   fastapi01:
     container_name: fastapi01
-    # image: 099139718958.dkr.ecr.ca-central-1.amazonaws.com/iot-mgnt-telemetry-fastapi:dev
+    image: 099139718958.dkr.ecr.ca-central-1.amazonaws.com/iot-mgnt-telemetry-fastapi:dev
     # image: simonangelfong/demo-ecs-svc-fastapi
     # image: fastapi
-    build:
-      context: ./fastapi/
-      dockerfile: Dockerfile
+    # build:
+      # context: ./fastapi/
+      # dockerfile: Dockerfile
     environment:
       - ENV=dev
       - DEBUG=true

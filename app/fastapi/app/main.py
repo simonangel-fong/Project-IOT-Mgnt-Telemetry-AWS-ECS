@@ -3,6 +3,7 @@ from __future__ import annotations
 import os
 import redis
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from .config import get_settings
 from .routers import health, device, telemetry
@@ -25,6 +26,24 @@ app = FastAPI(
     ),
 )
 
+# ============================================================
+# CORS
+# ============================================================
+ALLOWED_ORIGINS = [
+    # Frontend served directly from S3 website
+    "http://iot-mgnt-telemetry-dev-web-bucket.s3-website.ca-central-1.amazonaws.com",
+
+    # Frontend served via CloudFront
+    "https://iot-dev.arguswatcher.net",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=ALLOWED_ORIGINS,
+    allow_credentials=False,  # no cookies for devices
+    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["Content-Type", "x-api-key"],
+)
 
 # ============================================================
 # Root endpoint

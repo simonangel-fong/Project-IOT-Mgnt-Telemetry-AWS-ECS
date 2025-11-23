@@ -17,7 +17,7 @@ export function getHome({ base_url }) {
 // ==============================
 export function getHealth({ base_url }) {
   return checkGet({
-    url: `${base_url}/health`,
+    url: `${base_url}/api/health`,
     endpoint: "health",
   });
 }
@@ -27,7 +27,7 @@ export function getHealth({ base_url }) {
 // ==============================
 export function getHealthDB({ base_url }) {
   return checkGet({
-    url: `${base_url}/health/db`,
+    url: `${base_url}/api/health/db`,
     endpoint: "health_db",
   });
 }
@@ -37,7 +37,7 @@ export function getHealthDB({ base_url }) {
 // ==============================
 export function getDevices({ base_url }) {
   return checkGet({
-    url: `${base_url}/devices`,
+    url: `${base_url}/api/devices`,
     endpoint: "devices_get_all",
   });
 }
@@ -47,7 +47,7 @@ export function getDevices({ base_url }) {
 // ========================================
 export function getTelemetryLatest({ base_url, device }) {
   return checkGet({
-    url: `${base_url}/telemetry/latest/${device.device_uuid}`,
+    url: `${base_url}/api/telemetry/latest/${device.device_uuid}`,
     headers: { "X-API-Key": device.api_key },
     endpoint: "telemetry_get_latest",
     expectedStatuses: [200, 404],
@@ -58,7 +58,7 @@ export function getTelemetryLatest({ base_url, device }) {
 // POST /telemetry/{device_uuid}
 // ========================================
 export function postTelemetry({ base_url, device }) {
-  const url = `${base_url}/telemetry/${device.device_uuid}`;
+  const url = `${base_url}/api/telemetry/${device.device_uuid}`;
   const body = buildTelemetryPayload();
 
   return checkPost({
