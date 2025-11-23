@@ -9,14 +9,14 @@ import { getTelemetryLatest } from "./target_url.js";
 const BASE_URL = __ENV.BASE_URL || "http://localhost:8000";
 
 // High-performance read test parameters
-const RATE_START = parseNumberEnv("RATE_START", 200); // initial RPS
-const RATE_TARGET = parseNumberEnv("RATE_TARGET", 1500); // peak RPS
-const STAGE_RAMP = parseNumberEnv("STAGE_RAMP", 3); // minutes per ramp stage
+const RATE_START = parseNumberEnv("RATE_START", 50); // initial RPS
+const RATE_TARGET = parseNumberEnv("RATE_TARGET", 1000); // peak RPS
+const STAGE_RAMP = parseNumberEnv("STAGE_RAMP", 5); // minutes per ramp stage
 const STAGE_PEAK = parseNumberEnv("STAGE_PEAK", 10); // minutes to hold peak
 
 // VU pool
-const VU = parseNumberEnv("VU", 200); // pre-allocated VUs
-const MAX_VU = parseNumberEnv("MAX_VU", 1500); // safety upper bound
+const VU = parseNumberEnv("VU", 50); // pre-allocated VUs
+const MAX_VU = parseNumberEnv("MAX_VU", 1000); // safety upper bound
 
 // ==============================
 // k6 options
@@ -54,17 +54,11 @@ export const options = {
 
       stages: [
         // Ramp up
-        { duration: `${STAGE_RAMP}m`, target: RATE_START },
-        {
-          duration: `${STAGE_RAMP}m`,
-          target: Math.round(RATE_TARGET * 0.5),
-        },
-        {
-          duration: `${STAGE_RAMP}m`,
-          target: Math.round(RATE_TARGET * 0.75),
-        },
+        { duration: `${STAGE_RAMP}m`, target: Math.round(RATE_TARGET * 0.2) },
+        { duration: `${STAGE_RAMP}m`, target: Math.round(RATE_TARGET * 0.4) },
+        { duration: `${STAGE_RAMP}m`, target: Math.round(RATE_TARGET * 0.6) },
+        { duration: `${STAGE_RAMP}m`, target: Math.round(RATE_TARGET * 0.8) },
         { duration: `${STAGE_RAMP}m`, target: RATE_TARGET },
-
         // Hold the peak RPS
         { duration: `${STAGE_PEAK}m`, target: RATE_TARGET },
       ],

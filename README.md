@@ -17,6 +17,8 @@
 
   - [AWS ECS](./doc/aws/aws.md)
 
+- [Performance Tuning](./doc/hp/hp.md)
+
 - Dev cheapsheet
 
 ```sh

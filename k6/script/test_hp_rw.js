@@ -9,21 +9,21 @@ import { getTelemetryLatest, postTelemetry } from "./target_url.js";
 const BASE_URL = __ENV.BASE_URL || "http://localhost:8000";
 
 // -------- Write (POST) parameters --------
-const W_RATE_START = parseNumberEnv("W_RATE_START", 200);    // initial write RPS
-const W_RATE_TARGET = parseNumberEnv("W_RATE_TARGET", 1500); // peak write RPS
-const W_STAGE_RAMP = parseNumberEnv("W_STAGE_RAMP", 3);      // minutes per write ramp stage
-const W_STAGE_PEAK = parseNumberEnv("W_STAGE_PEAK", 10);     // minutes to hold peak write RPS
+const W_RATE_START = parseNumberEnv("W_RATE_START", 50); // initial write RPS
+const W_RATE_TARGET = parseNumberEnv("W_RATE_TARGET", 100); // peak write RPS
+const W_STAGE_RAMP = parseNumberEnv("W_STAGE_RAMP", 10); // minutes per write ramp stage
+const W_STAGE_PEAK = parseNumberEnv("W_STAGE_PEAK", 10); // minutes to hold peak write RPS
 
-const W_VU = parseNumberEnv("W_VU", 200);       // pre-allocated VUs for write
+const W_VU = parseNumberEnv("W_VU", 50); // pre-allocated VUs for write
 const W_MAX_VU = parseNumberEnv("W_MAX_VU", 1500); // max VUs for write scenario
 
 // -------- Read (GET) parameters --------
-const R_RATE_MIN = parseNumberEnv("R_RATE_MIN", 200);   // min read RPS
-const R_RATE_MAX = parseNumberEnv("R_RATE_MAX", 1500);  // max read RPS
-const R_STAGE = parseNumberEnv("R_STAGE", 3);           // minutes per read stage
-const R_STAGES = parseNumberEnv("R_STAGES", 5);         // number of random stages
+const R_RATE_MIN = parseNumberEnv("R_RATE_MIN", 200); // min read RPS
+const R_RATE_MAX = parseNumberEnv("R_RATE_MAX", 1500); // max read RPS
+const R_STAGE = parseNumberEnv("R_STAGE", 3); // minutes per read stage
+const R_STAGES = parseNumberEnv("R_STAGES", 5); // number of random stages
 
-const R_VU = parseNumberEnv("R_VU", 200);       // pre-allocated VUs for read
+const R_VU = parseNumberEnv("R_VU", 200); // pre-allocated VUs for read
 const R_MAX_VU = parseNumberEnv("R_MAX_VU", 1500); // max VUs for read scenario
 
 // random read stages once at init-time
@@ -81,20 +81,14 @@ export const options = {
       maxVUs: W_MAX_VU,
 
       stages: [
-        // Ramp up writes
-        { duration: `${W_STAGE_RAMP}m`, target: W_RATE_START },
-        {
-          duration: `${W_STAGE_RAMP}m`,
-          target: Math.round(W_RATE_TARGET * 0.5),
-        },
-        {
-          duration: `${W_STAGE_RAMP}m`,
-          target: Math.round(W_RATE_TARGET * 0.75),
-        },
-        { duration: `${W_STAGE_RAMP}m`, target: W_RATE_TARGET },
-
-        // Hold peak write RPS
-        { duration: `${W_STAGE_PEAK}m`, target: W_RATE_TARGET },
+        // Ramp up
+        { duration: `${STAGE_RAMP}m`, target: Math.round(RATE_TARGET * 0.2) },
+        { duration: `${STAGE_RAMP}m`, target: Math.round(RATE_TARGET * 0.4) },
+        { duration: `${STAGE_RAMP}m`, target: Math.round(RATE_TARGET * 0.6) },
+        { duration: `${STAGE_RAMP}m`, target: Math.round(RATE_TARGET * 0.8) },
+        { duration: `${STAGE_RAMP}m`, target: RATE_TARGET },
+        // Hold the peak RPS
+        { duration: `${STAGE_PEAK}m`, target: RATE_TARGET },
       ],
 
       gracefulStop: "60s",
