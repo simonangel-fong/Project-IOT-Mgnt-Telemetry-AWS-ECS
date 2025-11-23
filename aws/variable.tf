@@ -100,9 +100,5 @@ variable "dns_domain" {
 
 locals {
   dns_name = var.env == "prod" ? "iot.${var.dns_domain}" : "iot-${var.env}.${var.dns_domain}"
-  post_url = "https://${local.dns_name}/api/telemetry"
-}
-
-output "test" {
-  value = local.post_url
+  target_url = "https://${local.dns_name}/api/telemetry"
 }

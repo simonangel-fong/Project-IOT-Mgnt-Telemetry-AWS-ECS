@@ -94,7 +94,7 @@ resource "aws_ecs_task_definition" "ecs_task_device" {
     image         = local.ecr_device
     awslogs_group = local.svc_device_log_group_name
     interval      = 1
-    remote        = local.dns_name
+    target_url    = local.target_url
     region        = var.aws_region
     # app_name      = var.project
   })
@@ -104,38 +104,38 @@ resource "aws_ecs_task_definition" "ecs_task_device" {
   }
 }
 
-# # #################################
-# # ECS: Service
-# # #################################
-# resource "aws_ecs_service" "ecs_svc_device" {
-#   name    = "${var.project}-${var.env}-service-device"
-#   cluster = aws_ecs_cluster.ecs_cluster.id
+# #################################
+# ECS: Service
+# #################################
+resource "aws_ecs_service" "ecs_svc_device" {
+  name    = "${var.project}-${var.env}-service-device"
+  cluster = aws_ecs_cluster.ecs_cluster.id
 
-#   # task
-#   task_definition  = aws_ecs_task_definition.ecs_task_device.arn
-#   desired_count    = 1
-#   launch_type      = "FARGATE"
-#   platform_version = "LATEST"
+  # task
+  task_definition  = aws_ecs_task_definition.ecs_task_device.arn
+  desired_count    = 1
+  launch_type      = "FARGATE"
+  platform_version = "LATEST"
 
-#   # network
-#   network_configuration {
-#     security_groups  = [aws_security_group.sg_device.id]
-#     subnets          = [for subnet in aws_subnet.public : subnet.id]
-#     assign_public_ip = true # enable public ip
-#   }
+  # network
+  network_configuration {
+    security_groups  = [aws_security_group.sg_device.id]
+    subnets          = [for subnet in aws_subnet.public : subnet.id]
+    assign_public_ip = true # enable public ip
+  }
 
-#   deployment_minimum_healthy_percent = 50
-#   deployment_maximum_percent         = 200
+  deployment_minimum_healthy_percent = 50
+  deployment_maximum_percent         = 200
 
-#   lifecycle {
-#     ignore_changes = [desired_count]
-#   }
+  lifecycle {
+    ignore_changes = [desired_count]
+  }
 
-#   tags = {
-#     Name = "${var.project}-${var.env}-service-device"
-#   }
+  tags = {
+    Name = "${var.project}-${var.env}-service-device"
+  }
 
-#   depends_on = [
-#     aws_cloudwatch_log_group.log_group_device,
-#   ]
-# }
+  depends_on = [
+    aws_cloudwatch_log_group.log_group_device,
+  ]
+}
