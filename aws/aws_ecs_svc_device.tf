@@ -137,5 +137,6 @@ resource "aws_ecs_service" "ecs_svc_device" {
 
   depends_on = [
     aws_cloudwatch_log_group.log_group_device,
+    cloudflare_record.dns_record, # until the dns deploy
   ]
 }

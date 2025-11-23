@@ -6,7 +6,7 @@
 // Config
 // ==============================
 
-// Base URL for your *dev* API
+// Base URL
 const BASE_URL = "https://iot-dev.arguswatcher.net";
 // const BASE_URL = "http://localhost:8080";
 
