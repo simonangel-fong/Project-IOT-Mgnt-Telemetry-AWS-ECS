@@ -166,6 +166,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Update DNS
+        run: |
+          sed -i "s/${{vars.DNS_DEV}}/${{vars.DNS_DEV}}/g" "app/html/js/main.js"
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
