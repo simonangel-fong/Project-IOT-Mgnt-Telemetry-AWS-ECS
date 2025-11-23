@@ -1,0 +1,42 @@
+[
+  {
+    "alias": "device-001",
+    "device_uuid": "e003031d-e441-4ece-ba5b-7d54d5b1da21"
+  },
+  {
+    "alias": "device-002",
+    "device_uuid": "d6a07ca5-0ce9-41c3-8dc8-eec41b47b47b"
+  },
+  {
+    "alias": "device-003",
+    "device_uuid": "aa1b41a2-c8f6-44c7-9644-4e9b719a66e9"
+  },
+  {
+    "alias": "device-004",
+    "device_uuid": "637c72d6-8ed3-4bf1-b23a-8ec84204846f"
+  },
+  {
+    "alias": "device-005",
+    "device_uuid": "199a53cd-1d9c-4b43-8e46-5f1e1e10c4f8"
+  },
+  {
+    "alias": "device-006",
+    "device_uuid": "1992af01-6789-4072-a516-eb251fa66bd3"
+  },
+  {
+    "alias": "device-007",
+    "device_uuid": "9ee2c87c-d990-44cc-a51f-fe3414daddd6"
+  },
+  {
+    "alias": "device-008",
+    "device_uuid": "4b02cbb7-53ea-4dff-8d5d-b93db0dcb5c1"
+  },
+  {
+    "alias": "device-009",
+    "device_uuid": "8ce6142d-28d5-4dcf-82a9-ef9326c93f03"
+  },
+  {
+    "alias": "device-010",
+    "device_uuid": "03618450-a5c7-4bb4-a437-21e978a41c5e"
+  }
+]

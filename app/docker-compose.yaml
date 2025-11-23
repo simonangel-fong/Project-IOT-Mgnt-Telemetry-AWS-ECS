@@ -68,6 +68,8 @@ services:
       context: ./fastapi/
       dockerfile: Dockerfile
     environment:
+      - APP_NAME=fdsfafdsa
+      - CORS="http://localhost,http://localhost:8080,https://localhost"
       - ENV=dev
       - DEBUG=true
       - POSTGRES__HOST=postgres
@@ -95,115 +97,12 @@ services:
           cpus: "1"
           memory: 256M
 
-  # fastapi02:
-  #   container_name: fastapi02
-  #   # image: simonangelfong/demo-ecs-svc-fastapi
-  #   # image: fastapi
-  #   build:
-  #     context: ./fastapi/
-  #     dockerfile: Dockerfile
-  #   environment:
-  #     - ENV=dev
-  #     - DEBUG=true
-  #     - POSTGRES_HOST=postgres
-  #     - POSTGRES_PORT=5432
-  #     - POSTGRES_APP_USER=app_user
-  #     - POSTGRES_APP_DB=app_db
-  #     - POSTGRES_APP_PASSWORD=postgres
-  #     - REDIS_HOST=redis
-  #     - REDIS_PORT=6379
-  #     - REDIS_DB=0
-  #   networks:
-  #     # - public_network
-  #     - private_network
-  #   ports:
-  #     - 8000:8000
-  #   depends_on:
-  #     - postgres
-  #     - redis
-  #   deploy:
-  #     resources:
-  #       limits:
-  #         cpus: "2"
-  #         memory: 512M
-  #       reservations:
-  #         cpus: "1"
-  #         memory: 256M
-
-  # fastapi03:
-  #   container_name: fastapi03
-  #   # image: simonangelfong/demo-ecs-svc-fastapi
-  #   # image: fastapi
-  #   build:
-  #     context: ./fastapi/
-  #     dockerfile: Dockerfile
-  #   environment:
-  #     - ENV=dev
-  #     - DEBUG=true
-  #     - POSTGRES_HOST=postgres
-  #     - POSTGRES_PORT=5432
-  #     - POSTGRES_APP_USER=app_user
-  #     - POSTGRES_APP_DB=app_db
-  #     - POSTGRES_APP_PASSWORD=postgres
-  #     - REDIS_HOST=redis
-  #     - REDIS_PORT=6379
-  #     - REDIS_DB=0
-  #   networks:
-  #     # - public_network
-  #     - private_network
-  #   ports:
-  #     - 8000:8000
-  #   depends_on:
-  #     - postgres
-  #     - redis
-  #   deploy:
-  #     resources:
-  #       limits:
-  #         cpus: "2"
-  #         memory: 512M
-  #       reservations:
-  #         cpus: "1"
-  #         memory: 256M
-
-  # fastapi04:
-  #   container_name: fastapi04
-  #   # image: simonangelfong/demo-ecs-svc-fastapi
-  #   # image: fastapi
-  #   build:
-  #     context: ./fastapi/
-  #     dockerfile: Dockerfile
-  #   environment:
-  #     - ENV=dev
-  #     - DEBUG=true
-  #     - POSTGRES_HOST=postgres
-  #     - POSTGRES_PORT=5432
-  #     - POSTGRES_APP_USER=app_user
-  #     - POSTGRES_APP_DB=app_db
-  #     - POSTGRES_APP_PASSWORD=postgres
-  #     - REDIS_HOST=redis
-  #     - REDIS_PORT=6379
-  #     - REDIS_DB=0
-  #   networks:
-  #     # - public_network
-  #     - private_network
-  #   ports:
-  #     - 8000:8000
-  #   depends_on:
-  #     - postgres
-  #     - redis
-  #   deploy:
-  #     resources:
-  #       limits:
-  #         cpus: "2"
-  #         memory: 512M
-  #       reservations:
-  #         cpus: "1"
-  #         memory: 256M
   nginx:
     container_name: nginx
     image: nginx:latest
     volumes:
       - ./nginx/config/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./html:/var/www/html
     networks:
       - public_network
       - private_network
@@ -214,3 +113,14 @@ services:
       # - fastapi02
       # - fastapi03
       # - fastapi04
+
+  device_simulator:
+    container_name: device_simulator
+    build:
+      context: ./device/
+      dockerfile: Dockerfile
+    environment:
+      - INTERVAL=1
+      # - TARGET_URL=https://iot-dev.arguswatcher.net/api/telemetry
+    networks:
+      - public_network

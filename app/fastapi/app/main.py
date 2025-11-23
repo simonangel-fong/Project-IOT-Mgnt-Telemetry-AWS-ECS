@@ -3,6 +3,8 @@ from __future__ import annotations
 import os
 import redis
 from fastapi import FastAPI
+# cors
+from fastapi.middleware.cors import CORSMiddleware
 
 from .config import get_settings
 from .routers import health, device, telemetry
@@ -11,7 +13,7 @@ from .config.logging import setup_logging
 setup_logging()
 
 HOSTNAME = os.getenv("HOSTNAME", "my_host")
-
+API_PREFIX = "/api"
 settings = get_settings()
 
 app = FastAPI(
@@ -25,12 +27,23 @@ app = FastAPI(
     ),
 )
 
+# ====================
+# CORS
+# ====================
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.cors_list,
+    allow_credentials=False,  # no cookies for devices
+    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["Content-Type", "x-api-key"],
+)
 
-# ============================================================
+
+# ====================
 # Root endpoint
-# ============================================================
+# ====================
 @app.get(
-    "/",
+    f"{API_PREFIX}/",
     tags=["root"],
     summary="Service status",
     description=(
@@ -41,6 +54,7 @@ async def home() -> dict:
     """
     Return basic service metadata and status.
     """
+    print(settings.cors_list)
     response: dict = {
         "app": settings.app_name,
         "status": "ok",
@@ -57,33 +71,32 @@ async def home() -> dict:
         response["fastapi"] = {
             "fastapi_host": HOSTNAME,
         }
-        
-        pgdb_cfg = settings.postgres
+
         response["postgres"] = {
-            "host": pgdb_cfg.host,
-            "port": pgdb_cfg.port,
-            "db_name": pgdb_cfg.db,
-            "user": pgdb_cfg.user,
+            "host": settings.postgres.host,
+            "port": settings.postgres.port,
+            "db_name": settings.postgres.db,
+            "user": settings.postgres.user,
         }
 
-        rd_cfg = settings.redis
         response["redis"] = {
-            "host": rd_cfg.host,
-            "port": rd_cfg.port,
-            "db_name": rd_cfg.db,
+            "host": settings.redis.host,
+            "port": settings.redis.port,
+            "db_name": settings.redis.db,
         }
+
+        response["cors"] = settings.cors_list
 
     return response
 
-# ============================================================
+# ====================
 # Routers
-# ============================================================
-# Health check / liveness & readiness probes
-app.include_router(health.router)
+# ====================
+# Health check & readiness probes
+app.include_router(health.router, prefix=API_PREFIX)
 
 # Administrative device registry endpoints (UUID-based lookups)
-app.include_router(device.router)
+app.include_router(device.router, prefix=API_PREFIX)
 
 # Device-facing telemetry ingestion and listing endpoints
-app.include_router(telemetry.router)
-
+app.include_router(telemetry.router, prefix=API_PREFIX)

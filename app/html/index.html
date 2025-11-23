@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Telemetry Viewer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="min-h-screen bg-slate-950 text-slate-100 flex justify-center items-start">
+    <div class="w-full max-w-5xl px-4 py-8">
+        <!-- Header -->
+        <header class="mb-4">
+            <h1 class="text-2xl font-semibold">Telemetry Viewer</h1>
+            <p class="text-sm text-slate-400 mt-1">
+                Select a device to see its latest (x, y) position. The green dot represents the device.
+            </p>
+        </header>
+
+        <!-- Card -->
+        <section class="bg-slate-950/80 border border-slate-800 shadow-xl rounded-xl p-4 md:p-6">
+            <!-- Top controls -->
+            <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-3">
+                <div class="flex flex-col gap-1">
+                    <label for="device-select" class="text-xs font-medium text-slate-400">
+                        Device
+                    </label>
+                    <select id="device-select"
+                        class="bg-slate-950 border border-slate-700 rounded-lg px-3 py-1.5 text-sm outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+                        <!-- Options will be filled by telemetry.js using DEVICES -->
+                        <option value="" disabled selected>Select a device...</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Status line -->
+            <div class="flex flex-wrap items-center justify-between gap-3 text-xs text-slate-400 mb-4">
+                <span>
+                    Selected device:
+                    <span id="status-device" class="font-semibold text-slate-100">None</span>
+                </span>
+                <span>
+                    Last update:
+                    <span id="status-updated" class="font-semibold text-slate-100">N/A</span>
+                </span>
+            </div>
+
+            <!-- Main content -->
+            <div class="flex flex-col lg:flex-row gap-6">
+                <!-- Telemetry box -->
+                <div id="telemetry-box"
+                    class="relative w-full max-w-lg aspect-square rounded-xl border border-slate-800 bg-slate-950 overflow-hidden">
+                    <!-- Grid background -->
+                    <div class="pointer-events-none absolute inset-0 opacity-70" style="
+                background-image:
+                  linear-gradient(#111827 1px, transparent 1px),
+                  linear-gradient(90deg, #111827 1px, transparent 1px);
+                background-size: 40px 40px;
+              "></div>
+
+                    <!-- Axes -->
+                    <div class="absolute left-0 right-0 top-1/2 h-px bg-slate-700/80"></div>
+                    <div class="absolute top-0 bottom-0 left-1/2 w-px bg-slate-700/80"></div>
+
+                    <!-- Device point -->
+                    <div id="device-point"
+                        class="absolute z-10 w-3.5 h-3.5 rounded-full bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.8)] -translate-x-1/2 -translate-y-1/2"
+                        style="left: 50%; top: 50%;">
+                        <span id="device-point-label"
+                            class="absolute -translate-x-1/2 -translate-y-[180%] text-[0.65rem] px-2 py-0.5 rounded-full bg-slate-900/90 border border-slate-600 whitespace-nowrap">
+                            –
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Side info panel -->
+                <aside class="w-full lg:w-64 text-sm space-y-2">
+                    <h2 class="text-base font-semibold mb-1">Current Telemetry</h2>
+
+                    <p class="flex justify-between gap-2">
+                        <span class="text-slate-400 w-20">Device:</span>
+                        <span id="info-device" class="font-medium text-slate-100">–</span>
+                    </p>
+                    <p class="flex justify-between gap-2">
+                        <span class="text-slate-400 w-20">x:</span>
+                        <span id="info-x" class="font-medium text-slate-100">–</span>
+                    </p>
+                    <p class="flex justify-between gap-2">
+                        <span class="text-slate-400 w-20">y:</span>
+                        <span id="info-y" class="font-medium text-slate-100">–</span>
+                    </p>
+                    <p class="flex justify-between gap-2">
+                        <span class="text-slate-400 w-20">Updated:</span>
+                        <span id="info-updated" class="font-medium text-slate-100">–</span>
+                    </p>
+
+                    <p class="text-xs text-slate-500 mt-3">
+                        Data is fetched from
+                        <code class="text-emerald-400">/telemetry/latest/&lt;device_uuid&gt;</code>
+                        using the <code class="text-emerald-400">x-api-key</code> header.
+                    </p>
+                </aside>
+            </div>
+        </section>
+    </div>
+
+    <!-- <script src="js/sample-device.js"></script>
+    <script src="js/telemetry.js"></script> -->
+    <script src="/js/utils.js"></script>
+    <script src="/js/main.js"></script>
+</body>
+
+</html>

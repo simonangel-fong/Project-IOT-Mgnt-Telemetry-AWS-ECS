@@ -68,6 +68,11 @@ class Settings(BaseSettings):
 
     # General
     app_name: str = "Iot management telemetry"
+    cors: str = Field(
+        default="http://localhost,http://localhost:8000,http://localhost:8080",
+        alias="CORS",
+        description="Comma-separated list of allowed CORS origins",
+    )
     debug: bool = True
     env: Literal["dev", "staging", "prod"] = "dev"
 
@@ -95,9 +100,18 @@ class Settings(BaseSettings):
         """Redis connection URL."""
         return self.redis.url
 
+    @property
+    def cors_list(self) -> list[str]:
+        """Parsed list of CORS origins from the comma-separated string."""
+        return [
+            origin.strip()
+            for origin in self.cors.split(",")
+            if origin.strip()
+        ]
+
 
 # ==============================
-# Settings singleton
+# Settings
 # ==============================
 @lru_cache(maxsize=1)
 def get_settings() -> Settings:

@@ -1,5 +1,3 @@
-data "aws_caller_identity" "current" {}
-
 resource "aws_kms_key" "cloudwatch_logs" {
   description             = "KMS CMK for CloudWatch Logs"
   deletion_window_in_days = 30
